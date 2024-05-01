@@ -1,2 +1,2 @@
-# FLEMopt
-A comprehensive scheduling package for FERMI and LVC notices
+# FermOpt
+A comprehensive scheduling package for FERMI notices
