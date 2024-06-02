@@ -2,10 +2,10 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-from flemopt.tesselation_generator import rect_tess_maker
-import flemopt.GCN_utils as gcn
-from flemopt.lvc_handler import generate_fields_from_skymap
-from flemopt.scheduler_utilities import filter_for_visibility
+from tesselation_generator import rect_tess_maker
+import GCN_utils as gcn
+from lvc_handler import generate_fields_from_skymap
+from scheduler_utilities import filter_for_visibility
 import numpy as np
 
 
@@ -59,13 +59,11 @@ def main():
             print('okay if you are going to give both an event and event file, at least make sure theyre for the same event')
             exit
     
-
-    if not args.area == None:
         
 
 
-    if os.path.exists(f'data/configs/{telescope}.cfg'):
-        config.read(f'data/configs/{telescope}.cfg')
+    if os.path.exists(f'{FLEMOPT_DIR}/data/configs/{telescope}.cfg'):
+        config.read(f'{FLEMOPT_DIR}/data/configs/{telescope}.cfg')
     else:
         lat = input(f'please enter {telescope} latitude:')
         lon = input(f'please enter {telescope} longitude:')
@@ -82,33 +80,33 @@ def main():
             config.write(configfile)
 
     try:
-        lat = config[telescope]['lat']
-        lon = config[telescope]['lon']
-        RAfov = config[telescope]['RAfov']
-        DECfov = config[telescope]['DECfov']
-        elevation = config[telescope]['elevation']
+        lat = float(config[telescope]['lat'])
+        lon = float(config[telescope]['lon'])
+        RAfov = float(config[telescope]['RAfov'])
+        DECfov = float(config[telescope]['DECfov'])
+        elevation = float(config[telescope]['elevation'])
     except:
         print('flemopt config files MUST contain the following items: lat, lon, RAfov, DECfov and elevation. Default settings will be used for parameters not provided in configuration file')
     
     try:
-        tileScale = config[telescope]['tileScale']
+        tileScale = float(config[telescope]['tileScale'])
     except:
-        tileScale = default['telescope']['tileScale']
+        tileScale = float(default['telescope']['tileScale'])
 
     try:
-        minObsChance = config[telescope]['minObsChance']
+        minObsChance = float(config[telescope]['minObsChance'])
     except:
-        minObsChance = default['telescope']['minObsChance']
+        minObsChance = float(default['telescope']['minObsChance'])
 
     try:
-        horizon = config[telescope]['horizon']
+        horizon = float(config[telescope]['horizon'])
     except:
-        horizon = default['telescope']['horizon']
+        horizon = float(default['telescope']['horizon'])
 
-    if not os.path.exists(f'data/tesselations/{telescope}.tess'):
+    if not os.path.exists(f'{FLEMOPT_DIR}/data/tesselations/{telescope}.tess'):
         rect_tess_maker(telescope, RAfov, DECfov, tileScale)
 
-    if LVC:
+    if event:
         skymap_path =gcn.get_skymap(event, f'{FLEMOPT_DIR}/SKYMAP_DIR')
         fields, ids_to_fields = generate_fields_from_skymap(skymap_path, RAfov, DECfov, tileScale, minObsChance)
         filtered_fields = filter_for_visibility(fields, lat, lon, elevation, 'nautical', telescope, horizon)

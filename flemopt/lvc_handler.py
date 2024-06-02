@@ -4,8 +4,8 @@ from gcn_kafka import Consumer
 import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
-from flemopt.GCN_utils import getEvent, get_skymap
-from flemopt.scheduler_utilities import filter_for_visibility
+from GCN_utils import getEvent, get_skymap
+from scheduler_utilities import filter_for_visibility
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 def field_from_coords(coords, rafov, decfov, scale=0.97):

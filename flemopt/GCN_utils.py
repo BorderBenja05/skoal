@@ -10,7 +10,7 @@ import requests
 from pathlib import Path
 from ligo.gracedb.rest import GraceDb
 import lxml.etree
-from flemopt.GCN_utils import get_skymap
+
 
 
 
@@ -36,6 +36,7 @@ def download_from_url(skymap_url: str, output_dir: Path, skymap_name: str) -> Pa
     :param skymap_name: Name of skymap
     :return: Path to downloaded skymap
     """
+    output_dir = Path(output_dir)
     savepath = output_dir.joinpath(skymap_name)
 
     if savepath.exists():
@@ -127,16 +128,16 @@ def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None
     :return: path to the skymap
     """
 
-    if Path(event_name).exists():
-        savepath = Path(event_name)
-    elif output_dir.joinpath(event_name).exists():
-        savepath = output_dir.joinpath(event_name)
-    elif event_name[:8] == "https://":
-        savepath = download_from_url(
-            event_name, output_dir, os.path.basename(event_name)
-        )
-    else:
-        savepath = get_skymap_gracedb(event_name, output_dir=output_dir, rev=rev)
+    # if Path(event_name).exists():
+    #     savepath = Path(event_name)
+    # elif output_dir.joinpath(event_name).exists():
+    #     savepath = output_dir.joinpath(event_name)
+    # elif event_name[:8] == "https://":
+    #     savepath = download_from_url(
+    #         event_name, output_dir, os.path.basename(event_name)
+    #     )
+    # else:
+    savepath = get_skymap_gracedb(event_name, output_dir=output_dir, rev=rev)
 
     return savepath
 
