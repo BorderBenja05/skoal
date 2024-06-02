@@ -9,8 +9,6 @@ from scheduler_utilities import filter_for_visibility
 import numpy as np
 
 
-FLEMOPT_DIR = Path(__file__).parent.absolute()
-
 
 
 def main():
@@ -31,8 +29,8 @@ def main():
     default.read(f'data/configs/default.cfg')
     
     if telescope == None:
-        telescope = 'RASA11'
         # telescope = input('please enter telescope name: ')
+        telescope = 'RASA11'
     
     if not eventfile and not LVCevent:
         # entry = input('please provide event name or VOEvent.xml file: ')
@@ -40,6 +38,7 @@ def main():
         #     eventfile = entry
         # else:
         #     LVCevent = entry
+        eventfile = 
 
 
     if eventfile:
@@ -108,7 +107,7 @@ def main():
         rect_tess_maker(telescope, RAfov, DECfov, tileScale)
 
     if LVCevent:
-        skymap_path =gcn.get_skymap(LVCevent, f'{FLEMOPT_DIR}/SKYMAP_DIR')
+        skymap_path =gcn.get_skymap(LVCevent, f'{FLEMOPT_DIR}/skymaps')
         fields, ids_to_fields = generate_fields_from_skymap(skymap_path, RAfov, DECfov, tileScale, minObsChance)
         filtered_fields = filter_for_visibility(fields, lat, lon, elevation, 'nautical', telescope, horizon)
         with open(f'{outpath}/{LVCevent}_schedule.txt', 'w') as file:
