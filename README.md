@@ -2,7 +2,8 @@
 A lightweight, comprehensive scheduling package built for ultrafast follow-up observations of FERMI notices, LVC notices and any other multiorder healpix probability map or direction and error radius style Notices. I originally built this for the TURBO project so it's optimized for an array of telescope mounts requiring subsecond scheduling times.
 
 ################################################################################
-packaging in progress, email Borderbenja@gmail.com for current (working)codebase
+PACKAGING IN PROGRESS
+email Borderbenja@gmail.com for current (working)codebase
 ################################################################################
 
 The code can currently:
