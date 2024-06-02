@@ -25,37 +25,38 @@ def main():
     outpath = args.o
     telescope = args.t
     eventfile = args.voe
-    event = args.e
+    LVCevent = args.e
     config = configparser.ConfigParser()
     default = configparser.ConfigParser()
     default.read(f'data/configs/default.cfg')
     
     if telescope == None:
-        telescope = input('please enter telescope name:')
-    if eventfile and event == None:
-        entry = input('please provide event name or VOEvent.xml file')
-        if entry[-4:] == '.xml':
-            eventfile = entry
-        else:
-            event = entry
+        telescope = 'RASA11'
+        # telescope = input('please enter telescope name: ')
+    
+    if not eventfile and not LVCevent:
+        # entry = input('please provide event name or VOEvent.xml file: ')
+        # if entry[-4:] == '.xml':
+        #     eventfile = entry
+        # else:
+        #     LVCevent = entry
 
 
     if eventfile:
         if gcn.get_ivorn(eventfile) == 'Fermi':
             fermi = True
         elif gcn.get_ivorn(eventfile) == 'LVC':
-            event = gcn.getEvent(eventfile)
+            LVCevent = gcn.getEvent(eventfile)
             LVC = True
 
 
 
-
-    if event and eventfile:
+    if LVCevent and eventfile:
         print('it is unnecessary to provide both event and event file, either will do')
         if fermi and LVC:
             print('okay if you are going to give both an event and event file, at least make sure theyre for the same kind of event, pick a lane buddy...')
             exit        
-        elif not event == gcn.getEvent(eventfile):
+        elif not LVCevent == gcn.getEvent(eventfile):
             print('okay if you are going to give both an event and event file, at least make sure theyre for the same event')
             exit
     
@@ -65,11 +66,11 @@ def main():
     if os.path.exists(f'{FLEMOPT_DIR}/data/configs/{telescope}.cfg'):
         config.read(f'{FLEMOPT_DIR}/data/configs/{telescope}.cfg')
     else:
-        lat = input(f'please enter {telescope} latitude:')
-        lon = input(f'please enter {telescope} longitude:')
-        RAfov = input(f'please enter {telescope} RAfov:')
-        DECfov = input(f'please enter {telescope} DECfov:')
-        elevation = input(f'please enter {telescope} elevation:')
+        lat = input(f'please enter {telescope} latitude: ')
+        lon = input(f'please enter {telescope} longitude: ')
+        RAfov = input(f'please enter {telescope} RAfov: ')
+        DECfov = input(f'please enter {telescope} DECfov: ')
+        elevation = input(f'please enter {telescope} elevation: ')
         config.add_section(telescope)
         config.set(telescope, 'lat', lat)
         config.set(telescope, 'lon', lon)
@@ -106,11 +107,11 @@ def main():
     if not os.path.exists(f'{FLEMOPT_DIR}/data/tesselations/{telescope}.tess'):
         rect_tess_maker(telescope, RAfov, DECfov, tileScale)
 
-    if event:
-        skymap_path =gcn.get_skymap(event, f'{FLEMOPT_DIR}/SKYMAP_DIR')
+    if LVCevent:
+        skymap_path =gcn.get_skymap(LVCevent, f'{FLEMOPT_DIR}/SKYMAP_DIR')
         fields, ids_to_fields = generate_fields_from_skymap(skymap_path, RAfov, DECfov, tileScale, minObsChance)
         filtered_fields = filter_for_visibility(fields, lat, lon, elevation, 'nautical', telescope, horizon)
-        with open(f'{outpath}/{event}_schedule.txt', 'w') as file:
+        with open(f'{outpath}/{LVCevent}_schedule.txt', 'w') as file:
             for id, _ in filtered_fields:
                 file.write(f"{id},{np.rad2deg(ids_to_fields[id][0]):.5f},{np.rad2deg(ids_to_fields[id][1]):.5f},1\n")
 
