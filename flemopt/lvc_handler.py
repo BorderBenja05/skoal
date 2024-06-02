@@ -4,8 +4,8 @@ from gcn_kafka import Consumer
 import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
-import requests
-from flemopt.GCN_utils import getEvent
+from flemopt.GCN_utils import getEvent, get_skymap
+from flemopt.scheduler_utilities import filter_for_visibility
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 def field_from_coords(coords, rafov, decfov, scale=0.97):
@@ -52,10 +52,10 @@ def field_from_coords(coords, rafov, decfov, scale=0.97):
         
     return ids, fields
 
-def generate_fields_from_skymap(infile_path, rafov, decfov, scale, out_dir):
+def generate_fields_from_skymap(skymap_path, rafov, decfov, scale, minobs):
     # Read the file
-    skymap = QTable.read(infile_path)
-    event = getEvent(infile_path)
+    
+    skymap = QTable.read(skymap_path)
 
     # Sort by probability density
     skymap.sort('PROBDENSITY', reverse=True)
@@ -64,9 +64,9 @@ def generate_fields_from_skymap(infile_path, rafov, decfov, scale, out_dir):
     pixel_area = ah.nside_to_pixel_area(ah.level_to_nside(level))
     # Calculate the probability of each pixel
     probabilities = pixel_area * skymap['PROBDENSITY']
-    # Find the 90% cutoff
+    # Find minimum cutoff
     cumprob = np.cumsum(probabilities)
-    i = cumprob.searchsorted(0.9)
+    i = cumprob.searchsorted(minobs)
 
     # Find the corresponding tesselations of those pixels
     sky_coordinates = ah.healpix_to_lonlat(nested_index, ah.level_to_nside(level), order='nested')
@@ -85,45 +85,9 @@ def generate_fields_from_skymap(infile_path, rafov, decfov, scale, out_dir):
     sorted_fields = sorted(weights.items(), key=lambda item: item[1], reverse=True)
 
     # Write targets to file
-    with open(f'{out_dir}/{event}_targets.txt', 'w') as file:
-        for id, _ in sorted_fields:
-            file.write(f"{id},{np.rad2deg(ids_to_fields[id][0]):.5f},{np.rad2deg(ids_to_fields[id][1]):.5f},1\n")
+    # with open(f'{out_dir}/{event}_targets.txt', 'w') as file:
+    #     for id, _ in filtered_fields:
+    #         file.write(f"{id},{np.rad2deg(ids_to_fields[id][0]):.5f},{np.rad2deg(ids_to_fields[id][1]):.5f},1\n")
+    return sorted_fields, ids_to_fields
 
-def download_file(url):
-    ''' Source: https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests '''
-    local_filename = url.split('/')[-1]
-    # NOTE the stream=True parameter below
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(local_filename, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192): 
-                f.write(chunk)
-    return local_filename
-
-"""! Module for a DummyAlert which is intended for testing the TURBO hardware Alert system
-"""
-
-
-def handle_alert(self, site_controller: "SiteController", data):
-    """! Handles the alert by using the site_controller class
-    @param site_controller  The overall point of control for the site
-    @param data             The data retrieved by catching the alert
-    """
-
-    print(f"Handling an Alert")
-
-    # Find the skymap_fits parameter within the GW_SKYMAP group
-    root = ET.fromstring(data.value())
-    fits_url = root.find(".//Param[@name='skymap_fits']").attrib.get('value')
-
-    # Write xml for records        
-    ET.ElementTree(root).write(f'{data.topic()}_{data.offset()}.xml')
-
-    # Download skymap
-    file_name = download_file(fits_url)
-
-    # Generate fields from skymap
-    generate_fields_from_skymap(file_name)
-
-    self.detected_event.set()
 

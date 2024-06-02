@@ -3,23 +3,29 @@ import os
 from urllib.parse import urlparse
 import astropy.units as u
 from astropy.coordinates import SkyCoord
+import astropy_healpix as ah
+from astropy.table import QTable
 import numpy as np
 import requests
 from pathlib import Path
 from ligo.gracedb.rest import GraceDb
 import lxml.etree
+from flemopt.GCN_utils import get_skymap
 
 
 
-def GetConfig(telescope):
-    configfile = f'{telescope}.config'
-    stuff = np.loadtxt(configfile, usecols=(1))
-    fov = stuff[0]
-    lat = stuff[1]
-    lon = stuff[2]
-    exposuretime = stuff[3]
-    return fov, lat, lon, exposuretime 
-
+def area(total_probability, bayestar_file):
+    skymap = QTable.read(bayestar_file)
+    skymap.sort('PROBDENSITY', reverse=True)
+    level = ah.uniq_to_level_ipix(skymap['UNIQ'])
+    pixel_area = ah.nside_to_pixel_area(ah.level_to_nside(level))
+    prob = pixel_area * skymap['PROBDENSITY']
+    cumprob = np.cumsum(prob)
+    i = cumprob.searchsorted(total_probability)
+    area_90 = pixel_area[:i].sum()
+    area=area_90.to_value(u.deg**2)
+    print(area)
+    return area
 
 def download_from_url(skymap_url: str, output_dir: Path, skymap_name: str) -> Path:
     """
@@ -96,6 +102,19 @@ def get_skymap_gracedb(
     skymap_path = download_from_url(latest_skymap_url, output_dir, skymap_name)
 
     return skymap_path
+
+
+def get_ivorn(xml_file_path):
+    try:
+        tree = ET.parse(xml_file_path)
+        root = tree.getroot()
+        ivorn = root.attrib['ivorn']
+        # Extracting from the 3rd '/' to the '#' character
+        return ivorn.split('/')[2].split('#')[0]
+    except Exception as e:
+        print("Error:", e)
+        return None
+
 
 
 def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None) -> Path:

@@ -1,7 +1,7 @@
-from astroplan import FixedTarget, AirmassConstraint, AtNightConstraint, MoonSeparationConstraint, AltitudeConstraint, is_observable
+from astroplan import FixedTarget, AirmassConstraint, AtNightConstraint, MoonSeparationConstraint, AltitudeConstraint, is_observable, Observer
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import SkyCoord, EarthLocation
 from astropy.time import Time
 import astropy.units as u
 from sklearn.cluster import KMeans
@@ -51,14 +51,18 @@ def separate_targets_evenly(targets, n):
 
     return telescope_targets
 
-def filter_for_visibility(targets, observer, twilight):
+def filter_for_visibility(targets, lat, lon, altitude, twilight, telescope, horizon):
+
     # Constraints for the telescope
     constraints = [AirmassConstraint(max=2, boolean_constraint=False),
                     AtNightConstraint.twilight_nautical() 
                     if twilight == 'nautical' else AtNightConstraint.twilight_astronomical(),
         MoonSeparationConstraint(min=30*u.deg),
-        AltitudeConstraint(min=10*u.deg)]
-
+        AltitudeConstraint(min=horizon*u.deg)]
+    loc = EarthLocation(lat=float(lat)*u.deg, 
+                        lon=float(lon)*u.deg, 
+                        height=float(altitude)*u.m)
+    observer = Observer(loc, name=telescope, timezone="US/Central")    
     # The offset is for testing what happens if you schedule during the night
     t = Time.now()#+8.*u.hour
     t_start = Time(t, format='jd')
