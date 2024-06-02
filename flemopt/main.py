@@ -2,7 +2,7 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-from tesselation_generator import rect_tess_maker
+from flemopt.tesselation_generator import rect_tess_maker
 
 
 

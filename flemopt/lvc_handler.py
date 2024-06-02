@@ -5,7 +5,7 @@ import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
 import requests
-from GCN_utils import getEvent
+from flemopt.GCN_utils import getEvent
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 def field_from_coords(coords, rafov, decfov, scale=0.97):
@@ -102,39 +102,6 @@ def download_file(url):
 
 """! Module for a DummyAlert which is intended for testing the TURBO hardware Alert system
 """
-
-class LvcAlertHandler(AlertHandler):
-    """! DummyAlert. Generates fake alerts with RA/DEC pointings for testing purposes.
-    """
-def __init__(self, event):
-    """! Construct a DummyAlert instance
-    """
-    super().__init__()
-    # An event object to communicate with the scheduler
-    self.detected_event = event
-
-def _alert_listener(self):
-    """! Alert listener for the DummyAlert, waits periodically before propagating an Alert
-    """
-    # Connect as a consumer (client "TURBO_Kafka")
-    # Warning: don't share the client secret with others.
-    consumer = Consumer(client_id='2vvouktibnc9ghg1e3ppbd4n96',
-                        client_secret='1peni3v9agalojvv48i5lmnpunjs5645rtig354hjfnnp02i2bl1')
-
-
-    # Subscribe to topics and receive Ground_Positions
-    consumer.subscribe(['gcn.classic.voevent.LVC_COUNTERPART',
-                        'gcn.classic.voevent.LVC_INITIAL',
-                        'gcn.classic.voevent.LVC_PRELIMINARY'])
-    
-    # specific alert listener 
-    while True:
-        for message in consumer.consume(timeout=1):
-            if message.error():
-                print(message.error())
-                continue
-
-            self.handle_alert(self.site_controller, message)
 
 
 def handle_alert(self, site_controller: "SiteController", data):

@@ -18,7 +18,7 @@ def spherical_to_cartesian(spherical_cartesian_coords):
     cartesian_coords = np.column_stack((x, y, z))
     return cartesian_coords
 
-def Fermi_handle(self, site_controller: "SiteController", data):
+def Fermi_handle(telescope,outpath, data):
         """! Handles the alert by using the site_controller class
         @param site_controller  The overall point of control for the site
         @param data             The data retrieved by catching the alert
@@ -47,7 +47,7 @@ def Fermi_handle(self, site_controller: "SiteController", data):
         r = 2*np.sin(np.radians(error)/2)
         
         # Read the file and extract the second and third columns
-        data = np.loadtxt(wk_dir.parents[2] / 'configuration/RASA11.tess', usecols=(1, 2))
+        data = np.loadtxt(f'data/tesselations/{telescope}.tess', usecols=(1, 2))
         # Create BallTree
         Tree = BallTree(spherical_to_cartesian(data), leaf_size=40)
 
@@ -55,9 +55,6 @@ def Fermi_handle(self, site_controller: "SiteController", data):
         pointers = [list(data[index]) for index in field_ids]
 
         # Write targets to file
-        with open(wk_dir.parent / 'scheduling/schedules/event_targets.txt', 'w') as file:
+        with open(wk_dir.parent[2] / outpath, 'w') as file:
             for field, pointer in zip(field_ids, pointers):
                 file.write(f"{field},{pointer[0]},{pointer[1]},1\n")
-
-        # Notify Scheduler
-        self.detected_event.notify()

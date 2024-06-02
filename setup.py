@@ -4,14 +4,25 @@ setup(
     name='flemopt',
     version='0.1',
     packages=find_packages(),
-    scripts=['scripts/flemopt.py'],
+    scripts=['scripts/run-flemopt.py'],
     entry_points={
         'console_scripts': [
             'flemopt=flemopt.main:main',
         ],
     },
     install_requires=[
-        # Add any dependencies your package needs here
+        'numpy>=1.26.4',
+        'scikit-learn>=1.4.2',
+        'astropy>=6.0.1',
+        'astropy-healpix>=1.0.3',
+        'astroplan>=0.10',
+        'scipy>=1.13.0',
+        'argparse',
+        'configparser>=7.0.0',
+        'requests>=2.31.0',
+        'ligo-gracedb>=2.12.0',
+        'lxml>=5.2.1',
+        'urllib3>=2.2.1',
     ],
     author='Benny Border',
     author_email='borderbenja@gmail.com',
