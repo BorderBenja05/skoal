@@ -10,7 +10,7 @@ The code can currently:
 - read and produce telescope configuration files
 - create an moc tiling for square and nonsquare telescope footprints of arbitrary dimensions
 - produce probability ordered target list of observable targets for given FERMI and LVC notices
-- use target list to produce cluster or probability divided schedules for arbitrarily sized telescope array
+- divide target list based on clusters or probability for arbitrarily sized telescope array
 
 Planned improvements:
 - parallelize reverse field lookup using multithreading/CuPy
