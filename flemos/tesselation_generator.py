@@ -40,7 +40,7 @@ def rect_tess_maker(telescope, rafov,decfov, scale=0.97):
             theta += theta_step
         phi += phi_step
     phis.append(np.pi/2)
-    thetas.append(0)
+    thetas.append(1)
     dec = np.array(np.rad2deg(phis))
     ra = np.array(np.rad2deg(thetas))
     tessfile_path = f'{wk_dir}/data/tesselations/{telescope}.tess'
