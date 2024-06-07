@@ -11,23 +11,27 @@ from config_utils import make_config_file
 import numpy as np
 from paths import FLEMOS_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR, TESTS_DIR
 import sys
+import time
 
 
 
 def main():
+    tstart = time.time()
     parser = argparse.ArgumentParser(description="change this NOW")
     parser.add_argument('-t', dest='t', type=str)
     parser.add_argument('-voe', dest='voe', type=str)
     parser.add_argument('-e', dest='e', type=str)
     parser.add_argument('-area', dest='area', type=str)
     parser.add_argument('-o', dest='o', type=str)
+    parser.add_argument('-multiscope', dest='m', type=str)
+
 
     args = parser.parse_args()
     outpath = args.o
     telescope = args.t
     eventfile = args.voe
     eventid = args.e
-
+    multiscopes=args.m
     
     if telescope == None:
         telescope = input('please enter telescope name: ')
@@ -73,9 +77,9 @@ def main():
 
     config = configparser.ConfigParser()
     default = configparser.ConfigParser()
-    default.read(f'data/configs/default.cfg')
+    default.read('data/configs/default.cfg')
 
-    if os.path.exists(f'{CONFIGS_DIR}/{telescope}.cfg'):
+    if os.path.exists(f'{CONFIGS_DIR}/{telescope}.cfg"):
         config.read(f'{CONFIGS_DIR}/{telescope}.cfg')
     else:
         make_config_file(telescope, CONFIGS_DIR)
@@ -122,18 +126,24 @@ def main():
         targets = [(id, np.rad2deg(ids_to_fields[id][0]), np.rad2deg(ids_to_fields[id][1])) for id, _ in sorted_fields]
         if args.area:
             gcn.area(minObsChance, skymap_path)
+        outname = eventid
         # print(targets)
         # print(ids_to_fields)
     
     if fermi:
         targets, error = Fermi_handle(telescope, eventfile, RAfov, DECfov)
         # print(targets)
-        if args.area:
+        if args.area:                     save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
+
             print(f'Search area is: {np.pi*(error^2)} square degrees')
 
     filtered_targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
     # print(filtered_targets)
-    save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
+    if multiscopes and not multiscopes == 1:
+        os.mkdir(f'{outpath}/{outname}')
+    else:
+        save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
+    print(time.time()-tstart)
 
     
 

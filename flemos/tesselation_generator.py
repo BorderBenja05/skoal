@@ -30,7 +30,7 @@ def rect_tess_maker(telescope, rafov,decfov, scale=0.97):
             horizontal_count = np.ceil(2*np.pi/rafov)
         else:
             horizontal_count = 1
-        print(horizontal_count)
+        # print(horizontal_count)
         theta = 0
         theta_step = 2 * np.pi / horizontal_count
         # print(np.rad2deg(theta_step))
@@ -52,7 +52,7 @@ def rect_tess_maker(telescope, rafov,decfov, scale=0.97):
     fid.close()
 
 
-rect_tess_maker( 'kasa11', 3.2, 2.1, .98)
+# rect_tess_maker( 'kasa11', 3.2, 2.1, .98)
 
 
 
