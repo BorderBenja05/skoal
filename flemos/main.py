@@ -79,7 +79,7 @@ def main():
     default = configparser.ConfigParser()
     default.read('data/configs/default.cfg')
 
-    if os.path.exists(f'{CONFIGS_DIR}/{telescope}.cfg"):
+    if os.path.exists(f'{CONFIGS_DIR}/{telescope}.cfg'):
         config.read(f'{CONFIGS_DIR}/{telescope}.cfg')
     else:
         make_config_file(telescope, CONFIGS_DIR)
