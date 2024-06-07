@@ -1,6 +1,6 @@
 from sklearn.neighbors import BallTree
 import xml.etree.ElementTree as ET
-from gcn_kafka import Consumer
+# from gcn_kafka import Consumer
 import numpy as np
 from paths import TESS_DIR
 from GCN_utils import getFERMICoordinates

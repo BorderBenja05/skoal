@@ -9,6 +9,8 @@ def field_from_coords(coords, rafov,decfov, scale=.97):
     decfov = np.deg2rad(decfov)
     phis = np.ceil(np.pi/decfov)
     phi_step = np.pi /phis
+    # print(phis)
+    # print(np.rad2deg(phi_step))
 
 
     phi = -np.pi/2
@@ -34,7 +36,7 @@ def field_from_coords(coords, rafov,decfov, scale=.97):
         phis.append(phi)
         phi += phi_step
     thetas.append(1)
-    # print(thetas)
+    # print(phis)
 
     start_index = []
     count = 0
@@ -46,32 +48,42 @@ def field_from_coords(coords, rafov,decfov, scale=.97):
     field_ids = []
     centers = []
 
-    i = 0
+    ddexs= []
+    raNs=[]
+
+
     for ra,dec in coords:
         ddex = dec_num(dec,phi_step)
+        # print(dec, phi_step)
+
+        # print(thetas)
         raN = ra_number(ra, thetas[ddex]) 
         id = raN + start_index[ddex]
         field_ids.append(id-1)
+
+        ddexs.append(ddex)
+        raNs.append(raN)
+        # print(raN, ddex)
+
         centers.append((thetasteps[ddex]*(raN-1), phis[ddex]))
+
     return field_ids, centers
         
 
 
-# These aren't actually called by field_from_coords but they are the same math and provide helpful understanding
-# into how the script actually works
 
 def ra_number(ra, thetas):
-    h = np.floor((ra/ (2*360/thetas)) + (3/2))
+    h = np.floor((ra/ (2*np.pi/thetas)) + (3/2))
     if h == thetas + 1:
         h = 1
     return int(h)
-# print(ra_number(85,2))
 
 def dec_num(dec,phi_step):
-    a = dec/phi_step
+    a = (dec+(np.pi/2))/phi_step
     num=np.round(a) 
     return int(num)
-# print(dec_num(1,30))
-ra = np.deg2rad(129.2)
-dec = np.deg2rad(-71.4)
-print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
+
+
+ra = np.deg2rad(32.7)
+dec = np.deg2rad(-86)
+# print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
