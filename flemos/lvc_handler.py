@@ -9,6 +9,7 @@ from scheduler_utilities import filter_for_visibility
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 def field_from_coords(coords, rafov, decfov, scale=0.97):
+    
     ''' 
     Find the cooresponding tesselation for a list of (ra, dec) coordinates.
     All angles are in radians
@@ -49,7 +50,7 @@ def field_from_coords(coords, rafov, decfov, scale=0.97):
         # Calculate the field coords with the indexes and the step size
         fields.append(((theta_index * theta_steps[phi_index]), (phi_index * phi_step - np.pi/2)))
         ids.append(id_offsets[phi_index]+int(theta_index))
-        
+         
     return ids, fields
 
 def generate_fields_from_skymap(skymap_path, rafov, decfov, scale, minobs):
@@ -83,11 +84,13 @@ def generate_fields_from_skymap(skymap_path, rafov, decfov, scale, minobs):
             weights[id] = probability
     # Sort by total probability
     sorted_fields = sorted(weights.items(), key=lambda item: item[1], reverse=True)
-
-    # Write targets to file
-    # with open(f'{out_dir}/{event}_targets.txt', 'w') as file:
-    #     for id, _ in filtered_fields:
-    #         file.write(f"{id},{np.rad2deg(ids_to_fields[id][0]):.5f},{np.rad2deg(ids_to_fields[id][1]):.5f},1\n")
+    # print(sorted_fields)
     return sorted_fields, ids_to_fields
 
-
+def save_targets_to_file(filtered_targets, out_dir):
+    with open(out_dir, 'w') as file:
+        for target in filtered_targets:
+            id = target[0]
+            ra_deg = target[1]
+            dec_deg = target[2]
+            file.write(f"{id},{ra_deg:.5f},{dec_deg:.5f},1\n")

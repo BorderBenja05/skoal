@@ -12,8 +12,6 @@ from ligo.gracedb.rest import GraceDb
 import lxml.etree
 
 
-
-
 def area(total_probability, bayestar_file):
     skymap = QTable.read(bayestar_file)
     skymap.sort('PROBDENSITY', reverse=True)
@@ -104,19 +102,27 @@ def get_skymap_gracedb(
 
     return skymap_path
 
+    
+
 
 def get_ivorn(xml_file_path):
     try:
-        tree = ET.parse(xml_file_path)
+        try:
+            tree = ET.parse(xml_file_path)
+        except:
+            print('file not found')
+            exit()
         root = tree.getroot()
         ivorn = root.attrib['ivorn']
         # Extracting from the 3rd '/' to the '#' character
-        return ivorn.split('/')[2].split('#')[0]
+        return ivorn.split('/')[3].split('#')[0]
     except Exception as e:
         print("Error:", e)
         return None
-
-
+# fermi = get_ivorn('/home/borderbenja/flemos/flemos/data/test_eventfiles/gcn.classic.voevent.FERMI_GBM_POS_TEST_4586.xml')
+# print(fermi)
+# lvc= get_ivorn('/home/borderbenja/flemos/flemos/data/test_eventfiles/gcn.classic.voevent.LVC_INITIAL_7486.xml')
+# print(lvc)
 
 def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None) -> Path:
     """
@@ -188,11 +194,6 @@ def decdeg2hms(decimal_degrees):
 
 # Description:
 #Changes decimal degrees to degree, minute, second
-
-
-
-
-
 
 
 def Fermi_fileWrite(output_file_path, radec, fields):

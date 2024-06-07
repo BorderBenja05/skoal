@@ -55,26 +55,27 @@ def filter_for_visibility(targets, lat, lon, altitude, twilight, telescope, hori
 
     # Constraints for the telescope
     constraints = [AirmassConstraint(max=2, boolean_constraint=False),
-                    AtNightConstraint.twilight_nautical() 
-                    if twilight == 'nautical' else AtNightConstraint.twilight_astronomical(),
-        MoonSeparationConstraint(min=30*u.deg),
+                    # AtNightConstraint.twilight_nautical() 
+                    # if twilight == 'nautical' else AtNightConstraint.twilight_astronomical(),
+        MoonSeparationConstraint(min=5*u.deg),
         AltitudeConstraint(min=horizon*u.deg)]
     loc = EarthLocation(lat=float(lat)*u.deg, 
                         lon=float(lon)*u.deg, 
                         height=float(altitude)*u.m)
     observer = Observer(loc, name=telescope, timezone="US/Central")    
     # The offset is for testing what happens if you schedule during the night
-    t = Time.now()#+8.*u.hour
+    t = Time.now()+12.*u.hour
     t_start = Time(t, format='jd')
 
     # Change targets to FixedTarget's
     fixed_targets = []
     for target in targets:
         fixed_targets.append(FixedTarget(coord=SkyCoord(
-            target[0]*u.deg, target[1]*u.deg), name=target[2]))
+            target[1]*u.deg, target[2]*u.deg), name=target[0]))
 
     # Check if targets will be observable in the time window
     observable = is_observable(constraints, observer, fixed_targets, times=[t_start])
+    # print(observable)
     filtered_targets = []
     for i in range(len(targets)):
         if observable[i]:
