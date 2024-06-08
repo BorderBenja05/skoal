@@ -119,10 +119,7 @@ def get_ivorn(xml_file_path):
     except Exception as e:
         print("Error:", e)
         return None
-# fermi = get_ivorn('/home/borderbenja/flemos/flemos/data/test_eventfiles/gcn.classic.voevent.FERMI_GBM_POS_TEST_4586.xml')
-# print(fermi)
-# lvc= get_ivorn('/home/borderbenja/flemos/flemos/data/test_eventfiles/gcn.classic.voevent.LVC_INITIAL_7486.xml')
-# print(lvc)
+
 
 def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None) -> Path:
     """

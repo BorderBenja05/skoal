@@ -1,8 +1,8 @@
 from pathlib import Path
 
 
-FLEMOS_DIR = Path(__file__).parent.absolute()
-DATA_DIR = FLEMOS_DIR.joinpath("data")
+SKOLL_DIR = Path(__file__).parent.absolute()
+DATA_DIR = SKOLL_DIR.joinpath("data")
 
 CONFIGS_DIR = DATA_DIR.joinpath("configs")
 TESS_DIR = DATA_DIR.joinpath('tesselations')

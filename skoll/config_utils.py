@@ -16,4 +16,3 @@ def make_config_file(telescope, CONFIGS_DIR):
     with open(f'{CONFIGS_DIR}/{telescope}.cfg', 'w') as configfile:
         config.write(configfile)
 
-# make_config_file('RASA12', '/home/borderbenja/flemos/flemos/data/configs')

@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='flemopt',
-    version='0.1',
+    name='Skoll',
+    version='0.3',
     packages=find_packages(),
-    scripts=['scripts/run-flemopt.py'],
+    scripts=['scripts/flemos.py'],
     entry_points={
         'console_scripts': [
             'flemopt=flemopt.main:main',

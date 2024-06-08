@@ -11,7 +11,7 @@ def spherical_to_cartesian(spherical_cartesian_coords):
     theta = np.radians(spherical_cartesian_coords[:, 0])
     phi = np.radians(spherical_cartesian_coords[:, 1] +90)
     x = np.sin(phi) * np.cos(theta)
-    y = np.sin(phi) * np.sin(theta)
+    y = np.sin(phi) * np.sin(theta) 
     z = np.cos(phi)
     cartesian_coords = np.column_stack((x, y, z))
     return cartesian_coords

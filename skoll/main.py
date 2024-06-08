@@ -10,7 +10,7 @@ from scheduler_utilities import filter_for_visibility
 from config_utils import make_config_file
 from Multiscope_handler import split_schedule
 import numpy as np
-from paths import FLEMOS_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR, TESTS_DIR
+from paths import SKOLL_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR, TESTS_DIR
 import sys
 import time
 
@@ -18,7 +18,7 @@ import time
 
 def main():
     # tstart = time.time()
-    parser = argparse.ArgumentParser(description="change this NOW")
+    parser = argparse.ArgumentParser(description="")
     parser.add_argument('-t' or '-telescope', dest='telescope', type=str)
     parser.add_argument('-voe' or '-voevent', dest='voevent', type=str)
     parser.add_argument('-e' or '-event', dest='event', type=str)
@@ -82,7 +82,7 @@ def main():
 
     config = configparser.ConfigParser()
     default = configparser.ConfigParser()
-    default.read('data/configs/default.cfg')
+    default.read(f'{SKOLL_DIR}/data/configs/default.cfg')
 
     if os.path.exists(f'{CONFIGS_DIR}/{telescope}.cfg'):
         config.read(f'{CONFIGS_DIR}/{telescope}.cfg')

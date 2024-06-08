@@ -1,0 +1,49 @@
+Metadata-Version: 2.1
+Name: Skoll
+Version: 0.3
+Summary: A brief description of your package
+Home-page: https://github.com/borderbenja05/flemopt
+Author: Benny Border
+Author-email: borderbenja@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.26.4
+Requires-Dist: scikit-learn>=1.4.2
+Requires-Dist: astropy>=6.0.1
+Requires-Dist: astropy-healpix>=1.0.3
+Requires-Dist: astroplan>=0.10
+Requires-Dist: scipy>=1.13.0
+Requires-Dist: argparse
+Requires-Dist: configparser>=7.0.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: ligo-gracedb>=2.12.0
+Requires-Dist: lxml>=5.2.1
+Requires-Dist: urllib3>=2.2.1
+
+# FLEMOS (Fast lightweight EM observation scheduler)
+A lightweight, comprehensive scheduling package built for ultrafast follow-up observations of FERMI notices and LVC notices. I originally built this for the TURBO project so it's optimized for an array of telescope mounts requiring subsecond scheduling times.
+
+
+PACKAGING IN PROGRESS,
+email Borderbenja@gmail.com for current (working)codebase
+
+The code can currently:
+- interact with gracedb to download and read skymaps
+- read and produce telescope configuration files
+- create an moc tiling for square and nonsquare telescope footprints of arbitrary dimensions
+- produce probability ordered target list of observable targets for given FERMI and LVC notices
+- divide target list based on clusters or probability for arbitrarily sized telescope array
+
+Planned improvements:
+- parallelize reverse field lookup using multithreading/CuPy
+- add other tiling methods(Shaon's method)
+- coordination between multiple telescope arrays
+
+
+Related repositories:
+- https://github.com/shaonghosh/sky_tiling.git 
+- https://github.com/mcoughlin/gwemopt

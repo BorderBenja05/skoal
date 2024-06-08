@@ -1,0 +1,2 @@
+[console_scripts]
+flemopt = flemopt.main:main

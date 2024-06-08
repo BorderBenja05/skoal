@@ -51,3 +51,4 @@ def save_targets_to_file(filtered_targets, out_dir):
             ra_deg = target[1]
             dec_deg = target[2]
             file.write(f"{id},{ra_deg:.5f},{dec_deg:.5f},1\n")
+    
