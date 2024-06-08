@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
-Name: Skoll
-Version: 0.3
-Summary: A brief description of your package
-Home-page: https://github.com/borderbenja05/flemopt
+Name: Skoal
+Version: 0.403
+Summary: a kilonova followup scheduling package for fermi and lvc notices
+Home-page: https://github.com/borderbenja05/skoal
 Author: Benny Border
 Author-email: borderbenja@gmail.com
 Classifier: Programming Language :: Python :: 3
@@ -24,12 +24,12 @@ Requires-Dist: ligo-gracedb>=2.12.0
 Requires-Dist: lxml>=5.2.1
 Requires-Dist: urllib3>=2.2.1
 
-# FLEMOS (Fast lightweight EM observation scheduler)
+# SKOAL (scheduling kilonovae algebraic lightweight)
 A lightweight, comprehensive scheduling package built for ultrafast follow-up observations of FERMI notices and LVC notices. I originally built this for the TURBO project so it's optimized for an array of telescope mounts requiring subsecond scheduling times.
 
 
 PACKAGING IN PROGRESS,
-email Borderbenja@gmail.com for current (working)codebase
+email Borderbenja@gmail.com for questions
 
 The code can currently:
 - interact with gracedb to download and read skymaps
@@ -39,9 +39,10 @@ The code can currently:
 - divide target list based on clusters or probability for arbitrarily sized telescope array
 
 Planned improvements:
-- parallelize reverse field lookup using multithreading/CuPy
 - add other tiling methods(Shaon's method)
 - coordination between multiple telescope arrays
+- add option to use balltree and compare method times
+- implement algebraic option for fermi notices
 
 
 Related repositories:

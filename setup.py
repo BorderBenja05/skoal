@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='Skoll',
-    version='0.3',
+    name='Skoal',
+    version='0.403',
     packages=find_packages(),
-    scripts=['scripts/flemos.py'],
+    scripts=['scripts/skoal.py'],
     entry_points={
         'console_scripts': [
-            'flemopt=flemopt.main:main',
+            'skoal=skoal.main:main',
         ],
     },
     install_requires=[
@@ -26,10 +26,10 @@ setup(
     ],
     author='Benny Border',
     author_email='borderbenja@gmail.com',
-    description='A brief description of your package',
+    description='a kilonova followup scheduling package for fermi and lvc notices',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/borderbenja05/flemopt',
+    url='https://github.com/borderbenja05/skoal',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
