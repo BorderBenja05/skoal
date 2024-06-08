@@ -17,25 +17,27 @@ import time
 
 
 def main():
-    tstart = time.time()
+    # tstart = time.time()
     parser = argparse.ArgumentParser(description="change this NOW")
-    parser.add_argument('-t', dest='t', type=str)
-    parser.add_argument('-voe', dest='voe', type=str)
-    parser.add_argument('-e', dest='e', type=str)
+    parser.add_argument('-t' or '-telescope', dest='telescope', type=str)
+    parser.add_argument('-voe' or '-voevent', dest='voevent', type=str)
+    parser.add_argument('-e' or '-event', dest='event', type=str)
     parser.add_argument('-area', dest='area', type=str)
-    parser.add_argument('-o', dest='o', type=str)
-    parser.add_argument('-multiscope', dest='m', type=str)
+    parser.add_argument('-o' or '-outpath', dest='outpath', type=str)
+    parser.add_argument('-multiscopes' or '-multiscope', dest='Number_of_telescopes', type=str)
 
 
     args = parser.parse_args()
-    outpath = args.o
-    telescope = args.t
-    eventfile = args.voe
-    eventid = args.e
-    multiscopes=args.m
+    outpath = args.outpath
+    telescope = args.telescope
+    eventfile = args.voevent
+    eventid = args.event
+    multiscopes=args.Number_of_telescopes
     
     if telescope == None:
         telescope = input('please enter telescope name: ')
+        if not telescope:
+            exit("No response, exiting...")
         # telescope = 'RASA11'
     
     if not eventfile and not eventid:
@@ -44,6 +46,8 @@ def main():
             eventfile = entry
         else:
             LVCevent = entry
+        if not entry:
+            exit("No response, exiting...")
 
         #FERMI test
         # eventfile = f'{TESTS_DIR}/gcn.classic.voevent.FERMI_GBM_POS_TEST_4586.xml'
@@ -121,6 +125,7 @@ def main():
     if not os.path.exists(outpath):
         os.mkdir(outpath)
         
+    tstart = time.time()
 
     if lvc:
         skymap_path =gcn.get_skymap(eventid, SKYMAPS_DIR)
@@ -139,7 +144,8 @@ def main():
             save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
 
             print(f'Search area is: {np.pi*(error^2)} square degrees')
-
+    print(f'field finding time: {time.time()-tstart}')
+    tstart = time.time()
     filtered_targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
     # print(filtered_targets)
     if multiscopes and not multiscopes == 1:
@@ -156,7 +162,7 @@ def main():
         save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
     
     
-    print(time.time()-tstart)
+    print(f'Scheduling time: {time.time()-tstart}')
 
 
 if __name__ == '__main__':
