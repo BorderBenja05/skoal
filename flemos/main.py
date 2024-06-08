@@ -8,6 +8,7 @@ from lvc_handler import generate_fields_from_skymap, save_targets_to_file
 from Fermi_handler import Fermi_handle
 from scheduler_utilities import filter_for_visibility
 from config_utils import make_config_file
+from Multiscope_handler import split_schedule
 import numpy as np
 from paths import FLEMOS_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR, TESTS_DIR
 import sys
@@ -119,6 +120,7 @@ def main():
     
     if not os.path.exists(outpath):
         os.mkdir(outpath)
+        
 
     if lvc:
         skymap_path =gcn.get_skymap(eventid, SKYMAPS_DIR)
@@ -133,19 +135,28 @@ def main():
     if fermi:
         targets, error = Fermi_handle(telescope, eventfile, RAfov, DECfov)
         # print(targets)
-        if args.area:                     save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
+        if args.area:                     
+            save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
 
             print(f'Search area is: {np.pi*(error^2)} square degrees')
 
     filtered_targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
     # print(filtered_targets)
     if multiscopes and not multiscopes == 1:
-        os.mkdir(f'{outpath}/{outname}')
+        try:
+            os.mkdir(f'{outpath}/{outname}')
+            outpath=f'{outpath}/{outname}'
+            inpath=f'{outpath}/{telescope}_array_targets.txt'
+            save_targets_to_file(filtered_targets, inpath)
+            split_schedule(inpath, outpath, multiscopes)
+            print(f'successfully saved {multiscopes} target lists')
+        except:
+            exit()
     else:
         save_targets_to_file(filtered_targets, f'{outpath}/{telescope}_targets.txt')
-    print(time.time()-tstart)
-
     
+    
+    print(time.time()-tstart)
 
 
 if __name__ == '__main__':
