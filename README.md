@@ -3,7 +3,7 @@ A lightweight, comprehensive scheduling package built for ultrafast follow-up ob
 
 
 PACKAGING IN PROGRESS,
-email Borderbenja@gmail.com for current (working)codebase
+email Borderbenja@gmail.com for questions
 
 The code can currently:
 - interact with gracedb to download and read skymaps
@@ -13,9 +13,10 @@ The code can currently:
 - divide target list based on clusters or probability for arbitrarily sized telescope array
 
 Planned improvements:
-- parallelize reverse field lookup using multithreading/CuPy
 - add other tiling methods(Shaon's method)
 - coordination between multiple telescope arrays
+- add option to use balltree and compare method times
+- implement algebraic option for fermi notices
 
 
 Related repositories:
