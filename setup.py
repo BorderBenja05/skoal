@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='Skoal',
-    version='0.411',
+    version='0.414',
     packages=find_packages(),
-    scripts=['scripts/skoal.py'],
+    scripts=['skoal/main.py'],
     entry_points={
         'console_scripts': [
             'skoal=skoal.main:main',
@@ -26,7 +26,7 @@ setup(
         'requests',
         'ligo-gracedb>=2.10.0',
         'lxml',
-        'urllib3',
+        'urllib3>=2.1.0',
     ],
     author='Benny Border',
     author_email='borderbenja@gmail.com',
