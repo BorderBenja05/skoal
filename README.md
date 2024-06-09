@@ -23,6 +23,7 @@ Planned improvements:
 - add option to use balltree and compare method times
 - implement algebraic option for fermi notices
 - implement cluster based array splitting option
+- add option to return observation chance
 
 
 
