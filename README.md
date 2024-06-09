@@ -17,6 +17,7 @@ The code can currently:
 - divide target list based on probability for arbitrarily sized telescope array
 
 Planned improvements:
+- add support for updating fovs
 - add other tiling methods(Shaon's method)
 - coordination between multiple telescope arrays
 - add option to use balltree and compare method times
