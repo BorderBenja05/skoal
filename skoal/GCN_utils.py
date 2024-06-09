@@ -105,22 +105,6 @@ def get_skymap_gracedb(
     
 
 
-def get_ivorn(xml_file_path):
-    try:
-        try:
-            tree = ET.parse(xml_file_path)
-        except:
-            print('file not found')
-            exit()
-        root = tree.getroot()
-        ivorn = root.attrib['ivorn']
-        # Extracting from the 3rd '/' to the '#' character
-        return ivorn.split('/')[3].split('#')[0]
-    except Exception as e:
-        print("Error:", e)
-        return None
-
-
 def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None) -> Path:
     """
     Fetches the event info and skymap from GraceDB
@@ -145,6 +129,25 @@ def get_skymap(event_name: str, output_dir: Path = 'SKYMAP_DIR', rev: int = None
     return savepath
 
 
+
+def get_ivorn(xml_file_path):
+    try:
+        try:
+            tree = ET.parse(xml_file_path)
+        except:
+            print('file not found')
+            exit()
+        root = tree.getroot()
+        ivorn = root.attrib['ivorn']
+        # Extracting from the 3rd '/' to the '#' character
+        return ivorn.split('/')[3].split('#')[0]
+    except Exception as e:
+        print("Error:", e)
+        return None
+    
+
+
+    
 def getEvent(xml_file):
     # Parse the XML file
     tree = ET.parse(xml_file)
