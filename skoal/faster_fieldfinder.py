@@ -8,7 +8,7 @@ def field_from_coords(coords, rafov, decfov, scale=.97):
 
     # Generate phi values
     phi_start = -np.pi / 2
-    phi_end = np.pi / 2 - phi_step
+    phi_end = np.pi / 2
     phis = np.arange(phi_start, phi_end + phi_step, phi_step)
 
     # Compute horizontal counts (thetas) for each phi
@@ -64,7 +64,7 @@ def ra_number(ra, thetas):
 def dec_num(dec, phi_step):
     return int(np.round((dec + (np.pi / 2)) / phi_step))
 
-# Example usage
-ra = np.deg2rad(32.7)
-dec = np.deg2rad(-86)
-print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
+# # Example usage
+# ra = np.deg2rad(32.7)
+# dec = np.deg2rad(89.8)
+# print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
