@@ -10,8 +10,7 @@ from skoal.scheduler_utilities import filter_for_visibility
 from skoal.config_utils import make_config_file
 from skoal.Multiscope_handler import split_schedule
 import numpy as np
-from skoal.paths import SKOAL_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR, TESTS_DIR
-import sys
+from skoal.paths import SKOAL_DIR, CONFIGS_DIR, TESS_DIR, SKYMAPS_DIR
 import time
 
 
@@ -19,12 +18,13 @@ import time
 def main():
     # tstart = time.time()
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument('-t' or '-telescope', dest='telescope', type=str)
-    parser.add_argument('-voe' or '-voevent', dest='voevent', type=str)
-    parser.add_argument('-e' or '-event', dest='event', type=str)
-    parser.add_argument('-area', dest='area', type=str)
-    parser.add_argument('-o' or '-outpath', dest='outpath', type=str)
-    parser.add_argument('-multiscopes' or '-multiscope' or '-m', dest='Number_of_telescopes', type=str)
+    parser.add_argument('-t', '-telescope', dest='telescope', type=str)
+    parser.add_argument('-voe', '-voevent', dest='voevent', type=str)
+    parser.add_argument('-e','-event', dest='event', type=str)
+    parser.add_argument('-area','-a', action='store_true')
+    parser.add_argument('-o','-outpath', dest='outpath', type=str)
+    parser.add_argument('-multiscopes','-multiscope', '-m', dest='Number_of_telescopes', type=str)
+    parser.add_argument('-alltargets','-alltargs','-alltarg', action='store_true')
 
 
     args = parser.parse_args()
@@ -33,13 +33,8 @@ def main():
     eventfile = args.voevent
     eventid = args.event
     multiscopes=args.Number_of_telescopes
+    alltargets = args.alltargets
     
-    if telescope == None:
-        print('telescope not given...')
-        telescope = input('please enter telescope name: ')
-        if not telescope:
-            exit("No response, exiting...")
-        # telescope = 'RASA11'
     
     if not eventfile and not eventid:
         print('no event/eventfile given...')
@@ -84,6 +79,12 @@ def main():
         fermi=False
 
 
+    if telescope == None:
+        print('telescope not given...')
+        telescope = input('please enter telescope name: ')
+        if not telescope:
+            exit("No response, exiting...")
+        # telescope = 'RASA11'
 
     config = configparser.ConfigParser()
     default = configparser.ConfigParser()
@@ -160,30 +161,45 @@ def main():
 
     
     print(f'field finding time: {time.time()-tstart}')
-    tstart = time.time()
-    filtered_targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
-    if len(filtered_targets) == 0:
-        print('No observable targets')
-        exit()
-    # print(filtered_targets)
+    
+    if not alltargets:
+        tstart = time.time()
+        print(f'filtering {len(targets)} targets for observability')
+        targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
+        print(f'time spent on observability filtering: {time.time()-tstart}')
+        if len(targets) == 0:
+            print('No observable targets')
+            exit()
+        else:
+            print(f'found {len(targets)} observable targets')
+    else:
+        print(f'skipping observability filtering for {len(targets)} targets')
+
+
+    
+
     if multiscopes and not int(multiscopes) == 1:
         try:
             os.mkdir(f'{outpath}/{outname}')
         except:
             print('output directory already exists, using existing path')
-        outpath=f'{outpath}/{outname}'
-        inpath=f'{outpath}/{telescope}_array_targets.txt'
-        save_targets_to_file(filtered_targets, inpath)
-        split_schedule(inpath, outpath, int(multiscopes))
-        print(f'successfully saved {multiscopes} target lists')
-        # except:
-        #     exit()
+        try:
+            outpath=f'{outpath}/{outname}'
+            inpath=f'{outpath}/{telescope}_array_targets.txt'
+            save_targets_to_file(targets, inpath)
+            tables = split_schedule(inpath, outpath, int(multiscopes))
+            print(f'successfully saved {multiscopes} lists with {len(tables[int(int(multiscopes)/2)])} targets each')
+        except:
+            print('failed to save targets successfully, exiting...')
+            exit()
     else:
-        save_targets_to_file(filtered_targets, f'{outpath}/{outname}.txt')
-        print(f'successfully saved to {outpath}/{outname}')
-    
-    
-    print(f'Scheduling time: {time.time()-tstart}')
+        try:
+            save_targets_to_file(targets, f'{outpath}/{outname}.txt')
+            print(f'successfully saved to {outpath}/{outname}')
+        except:
+            print('failed to save targets successfully, exiting...')
+            exit()
+
 
 
 if __name__ == '__main__':
