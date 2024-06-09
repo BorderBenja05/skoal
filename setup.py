@@ -2,13 +2,17 @@ from setuptools import setup, find_packages
 
 setup(
     name='Skoal',
-    version='0.403',
+    version='0.409',
     packages=find_packages(),
-    scripts=['scripts/skoal.py'],
+    scripts=['skoal/main.py'],
     entry_points={
         'console_scripts': [
             'skoal=skoal.main:main',
         ],
+    },
+    package_data={
+        # Include all files inside mypackage/data
+        'skoal': ['data/**/*'],
     },
     install_requires=[
         'numpy>=1.26.4',
