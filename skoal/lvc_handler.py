@@ -2,7 +2,7 @@ from astropy.table import QTable
 import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
-from skoal.field_from_coords import field_from_coords
+from skoal.faster_fieldfinder import field_from_coords
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 
