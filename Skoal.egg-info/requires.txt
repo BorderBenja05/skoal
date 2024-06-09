@@ -1,0 +1,12 @@
+numpy
+scikit-learn
+astropy
+astropy-healpix
+astroplan
+scipy
+argparse
+configparser
+requests
+ligo-gracedb>=2.10.0
+lxml
+urllib3
