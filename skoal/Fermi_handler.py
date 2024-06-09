@@ -2,8 +2,8 @@ from sklearn.neighbors import BallTree
 import xml.etree.ElementTree as ET
 # from gcn_kafka import Consumer
 import numpy as np
-from paths import TESS_DIR
-from GCN_utils import getFERMICoordinates
+from skoal.paths import TESS_DIR
+from skoal.GCN_utils import getFERMICoordinates
 
 # please just use this coordinate changer as others, such as astropy's, do
 # not take/return the correct format 

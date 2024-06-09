@@ -4,9 +4,9 @@ from gcn_kafka import Consumer
 import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
-from GCN_utils import getEvent, get_skymap
-from scheduler_utilities import filter_for_visibility
-from field_from_coords import field_from_coords
+from skoal.GCN_utils import getEvent, get_skymap
+from skoal.scheduler_utilities import filter_for_visibility
+from skoal.field_from_coords import field_from_coords
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
 
