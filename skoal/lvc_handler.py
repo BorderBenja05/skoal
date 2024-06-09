@@ -1,11 +1,7 @@
-import xml.etree.ElementTree as ET
 from astropy.table import QTable
-from gcn_kafka import Consumer
 import astropy_healpix as ah
 from pathlib import Path
 import numpy as np
-from skoal.GCN_utils import getEvent, get_skymap
-from skoal.scheduler_utilities import filter_for_visibility
 from skoal.field_from_coords import field_from_coords
 
 FLEMOPT_DIR = Path(__file__).parent.absolute()
