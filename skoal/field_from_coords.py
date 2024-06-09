@@ -86,6 +86,6 @@ def dec_num(dec,phi_step):
     return int(num)
 
 
-ra = np.deg2rad(32.7)
-dec = np.deg2rad(89)
-print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
+# ra = np.deg2rad(32.7)
+# dec = np.deg2rad(89)
+# # print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
