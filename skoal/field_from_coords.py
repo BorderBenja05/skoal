@@ -36,6 +36,8 @@ def field_from_coords(coords, rafov,decfov, scale=.97):
         phis.append(phi)
         phi += phi_step
     thetas.append(1)
+    thetasteps.append(2*np.pi)
+    phis.append(np.pi/2)
     # print(phis)
 
     start_index = []
@@ -85,5 +87,5 @@ def dec_num(dec,phi_step):
 
 
 ra = np.deg2rad(32.7)
-dec = np.deg2rad(-86)
-# print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
+dec = np.deg2rad(89)
+print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
