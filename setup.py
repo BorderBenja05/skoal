@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Skoal',
-    version='0.418',
+    version='0.421',
     packages=find_packages(),
     scripts=['skoal/main.py'],
     entry_points={
