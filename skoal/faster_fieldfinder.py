@@ -1,70 +1,69 @@
 import numpy as np
 
-def field_from_coords(coords, rafov, decfov, scale=.97):
-    # Scaling and converting degrees to radians
-    rafov = np.deg2rad(rafov * scale)
-    decfov = np.deg2rad(decfov * scale)
-    phi_step = np.pi / np.ceil(np.pi / decfov)
 
-    # Generate phi values
-    phi_start = -np.pi / 2
-    phi_end = np.pi / 2
-    phis = np.arange(phi_start, phi_end + phi_step, phi_step)
+def field_from_coords(coords, rafov, decfov, scale=0.97):
+    rafov *= scale
+    decfov *= scale
+    rafov = np.deg2rad(rafov)
+    decfov = np.deg2rad(decfov)
+    phis_count = int(np.ceil(np.pi / decfov))
+    phi_step = np.pi / phis_count
 
-    # Compute horizontal counts (thetas) for each phi
-    cos_phi = np.cos(phis + phi_step / 2)
-    horizontal_counts = np.ceil(2 * np.pi * cos_phi / rafov).astype(int)
+    phis = []
+    thetas = []
+    thetasteps = []
+    phi = -np.pi / 2
 
-    # Handle edge cases
-    horizontal_counts[phis < -phi_step / 2] = np.ceil(2 * np.pi * np.cos(phis[phis < -phi_step / 2] + phi_step / 2) / rafov).astype(int)
-    horizontal_counts[phis > phi_step / 2] = np.ceil(2 * np.pi * np.cos(phis[phis > phi_step / 2] - phi_step / 2) / rafov).astype(int)
-    horizontal_counts[np.abs(phis) <= phi_step / 2] = np.ceil(2 * np.pi / rafov).astype(int)
-    horizontal_counts[phis == -np.pi / 2] = 1
+    while phi < 0.5 * np.pi - 1e-8:
+        if phi < (0 - (phi_step / 2)) and phi != (-0.5 * np.pi):
+            horizontal_count = np.ceil((2 * np.pi * np.cos(phi + (phi_step / 2))) / rafov)
+        elif phi > (phi_step / 2) and phi < ((0.5 * np.pi) - (phi_step / 2)):
+            horizontal_count = np.ceil((2 * np.pi * np.cos(phi - (phi_step / 2))) / rafov)
+        elif phi < (phi_step / 2) and phi > (-phi_step / 2):
+            horizontal_count = np.ceil(2 * np.pi / rafov)
+        else:
+            horizontal_count = 1
+        hc = int(horizontal_count)
+        thetas.append(hc)
+        thetasteps.append(2 * np.pi / hc)
+        phis.append(phi)
+        phi += phi_step
 
-    # Compute start indices
-    start_index = np.cumsum(horizontal_counts) - horizontal_counts
+    thetas.append(1)
+    thetasteps.append(2 * np.pi)
+    phis.append(np.pi / 2)
 
-    # Compute theta steps
-    thetasteps = 2 * np.pi / horizontal_counts
+    start_index = np.zeros(len(thetas), dtype=np.int64)
+    for i in range(1, len(thetas)):
+        start_index[i] = start_index[i-1] + thetas[i-1]
 
-    # Initialize results
-    field_ids = np.empty(len(coords), dtype=int)
-    centers = np.empty((len(coords), 2), dtype=float)
+    num_coords = len(coords)
+    field_ids = np.empty(num_coords, dtype=np.int64)
+    centers = np.empty((num_coords, 2), dtype=np.float64)
 
-    # Convert input coords to numpy array
-    coords = np.array(coords)
-    ra = coords[:, 0]
-    dec = coords[:, 1]
-
-    # Vectorized computation of dec indices
-    dec_indices = np.round((dec + np.pi / 2) / phi_step).astype(int)
-
-    # Adjusting dec_indices that are out of bounds due to rounding
-    dec_indices = np.clip(dec_indices, 0, len(horizontal_counts) - 1)
-
-    # Vectorized computation of ra numbers and field IDs
-    theta_div = 2 * np.pi / horizontal_counts[dec_indices]
-    ra_numbers = np.floor((ra / theta_div) + 1.5).astype(int)
-    ra_numbers[ra_numbers > horizontal_counts[dec_indices]] = 1
-
-    field_ids[:] = ra_numbers + start_index[dec_indices] - 1
-
-    # Vectorized computation of centers
-    centers[:, 0] = thetasteps[dec_indices] * (ra_numbers - 1)
-    centers[:, 1] = phis[dec_indices]
+    for i in range(num_coords):
+        ra, dec = coords[i]
+        ddex = int(np.round((dec + np.pi / 2) / phi_step))
+        ddex = max(0, min(ddex, len(phis) - 1))
+        raN = int(np.floor((ra / (2 * np.pi / thetas[ddex])) + 1.5))
+        if raN == (thetas[ddex] + 1):
+            raN = 1
+        id = raN + start_index[ddex] - 1
+        field_ids[i] = id
+        centers[i] = (thetasteps[ddex] * (raN - 1), phis[ddex])
 
     return field_ids.tolist(), centers.tolist()
 
-def ra_number(ra, thetas):
-    h = np.floor((ra / (2 * np.pi / thetas)) + 1.5)
-    if h == thetas + 1:
-        h = 1
-    return int(h)
-
-def dec_num(dec, phi_step):
-    return int(np.round((dec + (np.pi / 2)) / phi_step))
-
 # # Example usage
-# ra = np.deg2rad(32.7)
-# dec = np.deg2rad(89.8)
-# print(field_from_coords([(ra, dec)], 3.2, 2.1, .98))
+# coords = np.deg2rad(np.array([[0, -89.999], [185.0, 90.0]]))
+# rafov = 10
+# decfov = 5
+
+# import time
+
+# start = time.time()
+# field_ids, centers = field_from_coords(coords, rafov, decfov)
+# end = time.time()
+# print(field_ids)
+# print(centers)
+# print(end - start)
