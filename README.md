@@ -20,7 +20,7 @@ Planned improvements:
 - add support for updating fovs
 - add other tiling methods(Shaon's method)
 - coordination between multiple telescope arrays
-- add option to use balltree and compare method times
+- add option to use balltree for lvc notices and compare method times
 - implement algebraic option for fermi notices
 - implement cluster based array splitting option
 - add option to return observation chance
