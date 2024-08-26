@@ -45,7 +45,6 @@ and if you want to output to a specific path, just include -o your/own/outpath i
 
 Special thanks to:
 - Austin Korpi for initial prototyping help, clustering, and using dictionaries so i didn't have to
-- Michael Coughlin for his excellent skymap grabber
 - Pat Kelly for his labratory resources
 - Mandeep Gill for his role as a test user
 
