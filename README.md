@@ -2,9 +2,7 @@
 A lightweight, comprehensive scheduling package built for ultrafast follow-up observations of FERMI notices and LVC notices. I originally built this for the TURBO project so it's optimized for an array of telescope mounts requiring subsecond scheduling times. Because this was built with speed in mind, algebraic reverse tile lookups are used in favor of tree(balltree, kdtree) based approaches, meaning it is truly linear!
 
 Author: Benny Border
-
-PACKAGING IN PROGRESS,
-email Borderbenja@gmail.com for questions
+email: Borderbenja@gmail.com 
 
 The code can currently:
 - interact with gracedb to download and read skymaps
