@@ -14,15 +14,6 @@ The code can currently:
 - cut target list down to observable targets
 - divide target list based on probability for arbitrarily sized telescope array
 
-Planned improvements:
-- add support for updating fovs
-- add other tiling methods(Shaon's method)
-- coordination between multiple telescope arrays
-- add option to use balltree for lvc notices and compare method times
-- implement algebraic option for fermi notices
-- implement cluster based array splitting option
-- add option to return observation chance
-
 
 
 Installation:
