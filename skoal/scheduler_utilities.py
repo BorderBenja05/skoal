@@ -1,7 +1,7 @@
-from astroplan import FixedTarget, AirmassConstraint, AtNightConstraint, MoonSeparationConstraint, AltitudeConstraint, is_observable, Observer
+from astroplan import FixedTarget, AirmassConstraint, MoonSeparationConstraint, AltitudeConstraint, is_observable, Observer
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
-from astropy.coordinates import SkyCoord, EarthLocation
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz
 from astropy.time import Time
 import astropy.units as u
 from sklearn.cluster import KMeans
@@ -51,33 +51,64 @@ def separate_targets_evenly(targets, n):
 
     return telescope_targets
 
-def filter_for_visibility(targets, lat, lon, altitude, twilight, telescope, horizon):
+def filter_for_visibility(targets, lat, lon, altitude, telescope_name, horizon=10.0, time=None):
+    """Filter targets for observability.
 
-    # Constraints for the telescope
-    constraints = [AirmassConstraint(max=2, boolean_constraint=False),
-                    # AtNightConstraint.twilight_nautical() 
-                    # if twilight == 'nautical' else AtNightConstraint.twilight_astronomical(),
-        MoonSeparationConstraint(min=5*u.deg),
-        AltitudeConstraint(min=horizon*u.deg)]
-    loc = EarthLocation(lat=float(lat)*u.deg, 
-                        lon=float(lon)*u.deg, 
+    Parameters
+    ----------
+    targets : list of tuples
+        Each tuple starts with (field_id, ra_deg, dec_deg, ...).
+    lat, lon : float
+        Observer latitude and longitude in degrees.
+    altitude : float
+        Observer elevation in metres.
+    telescope_name : str
+        Name used for the astroplan Observer.
+    horizon : float or callable
+        Minimum altitude in degrees. Pass a callable ``f(az_deg) -> float`` for
+        an azimuth-dependent horizon profile.
+    time : astropy.time.Time or None
+        Observation time. Defaults to now + 12 h.
+
+    Returns
+    -------
+    list
+        Subset of *targets* that are observable.
+    """
+    loc = EarthLocation(lat=float(lat)*u.deg,
+                        lon=float(lon)*u.deg,
                         height=float(altitude)*u.m)
-    observer = Observer(loc, name=telescope, timezone="US/Central")    
-    # The offset is for testing what happens if you schedule during the night
-    t = Time.now()+12.*u.hour
+    observer = Observer(loc, name=telescope_name, timezone="UTC")
+    t = (Time.now() + 12.*u.hour) if time is None else Time(time)
     t_start = Time(t, format='jd')
 
-    # Change targets to FixedTarget's
-    fixed_targets = []
-    for target in targets:
-        fixed_targets.append(FixedTarget(coord=SkyCoord(
-            target[1]*u.deg, target[2]*u.deg), name=target[0]))
+    fixed_targets = [
+        FixedTarget(coord=SkyCoord(target[1]*u.deg, target[2]*u.deg), name=str(target[0]))
+        for target in targets
+    ]
 
-    # Check if targets will be observable in the time window
-    observable = is_observable(constraints, observer, fixed_targets, times=[t_start])
-    # print(observable)
-    filtered_targets = []
-    for i in range(len(targets)):
-        if observable[i]:
-            filtered_targets.append(targets[i])
-    return filtered_targets
+    if callable(horizon):
+        # Azimuth-dependent: apply airmass + moon constraints via astroplan,
+        # then check per-target altitude against the horizon profile.
+        constraints = [
+            AirmassConstraint(max=2, boolean_constraint=False),
+            MoonSeparationConstraint(min=5*u.deg),
+        ]
+        observable = is_observable(constraints, observer, fixed_targets, times=[t_start])
+        altaz_frame = AltAz(obstime=t_start, location=loc)
+        filtered = []
+        for i, target in enumerate(targets):
+            if not observable[i]:
+                continue
+            altaz = SkyCoord(target[1]*u.deg, target[2]*u.deg).transform_to(altaz_frame)
+            if float(altaz.alt.deg) >= horizon(float(altaz.az.deg)):
+                filtered.append(target)
+        return filtered
+    else:
+        constraints = [
+            AirmassConstraint(max=2, boolean_constraint=False),
+            MoonSeparationConstraint(min=5*u.deg),
+            AltitudeConstraint(min=float(horizon)*u.deg),
+        ]
+        observable = is_observable(constraints, observer, fixed_targets, times=[t_start])
+        return [target for i, target in enumerate(targets) if observable[i]]
