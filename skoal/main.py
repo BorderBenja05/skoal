@@ -2,7 +2,7 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-from skoal.tesselation_generator import rect_tess_maker
+from skoal.tesselation_generator import rect_tess_maker, make_tiling
 import skoal.GCN_utils as gcn
 from skoal.lvc_handler import generate_fields_from_skymap, save_targets_to_file
 from skoal.Fermi_handler import Fermi_handle
@@ -153,10 +153,12 @@ def main():
         # print(ids_to_fields)
     
     if fermi:
-        targets, error = Fermi_handle(telescope, eventfile, RAfov, DECfov)
+        ra_fermi, dec_fermi, error_fermi = gcn.getFERMICoordinates(eventfile)
+        tiling = make_tiling(RAfov, DECfov, tileScale)
+        targets, error = Fermi_handle(tiling, ra_fermi, dec_fermi, error_fermi, RAfov, DECfov)
         # print(targets)
-        if args.area:                     
-            print(f'Search area is: {np.pi*(error^2)} square degrees')
+        if args.area:
+            print(f'Search area is: {np.pi*(error**2)} square degrees')
         outname = 'FERMI_targets'
 
     
@@ -165,7 +167,7 @@ def main():
     if not alltargets:
         tstart = time.time()
         print(f'filtering {len(targets)} targets for observability')
-        targets = filter_for_visibility(targets, lat, lon, elevation, 'nautical', telescope, horizon)
+        targets = filter_for_visibility(targets, lat, lon, elevation, telescope, horizon=horizon)
         print(f'time spent on observability filtering: {time.time()-tstart}')
         if len(targets) == 0:
             print('No observable targets')
