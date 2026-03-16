@@ -237,4 +237,4 @@ Optional (visualization only):
 
 7. **Tessellation files**: `.tess` files in `skoal/data/tesselations/` are auto-generated on first run for a telescope. Do not delete them without regenerating.
 
-8. **Attribution**: The MIT license has a custom clause — any paper using this code or its algorithms must credit Benjamin Border. Do not remove this from LICENSE.
+8. **License**: Standard MIT license.
