@@ -32,11 +32,6 @@ if you instead, have the path to a VOEvent.xml file of the event youd like to ma
 
 and if you want to output to a specific path, just include -o your/own/outpath in your arguments
 
-Special thanks to:
-- Austin Korpi for initial prototyping help, clustering, and using dictionaries so i didn't have to
-- Pat Kelly for his labratory resources
-- Mandeep Gill for many helpful suggestions an being a test user
-
 
 Related repositories:
 - https://github.com/shaonghosh/sky_tiling.git 
